@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify
-from flask_restful import Resource, Api
-import json, pymongo, time
+from flask import Flask, request
+from flask_restful import Api
+import json
 from pymongo import MongoClient
 from datetime import datetime
 

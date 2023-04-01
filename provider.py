@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from werkzeug.middleware.proxy_fix import ProxyFix
-import json, pymongo, re
+import json
 from pymongo import MongoClient
 from datetime import datetime
 
