@@ -20,13 +20,13 @@ app.config["JWT_SECRET_KEY"] = "Senai2022"
 
 @app.before_first_request
 def create_database():
-    database.create_all()
+    db.create_all()
 
 api.add_resource(Users, '/users')
 api.add_resource(User, '/users/<int:id>', '/users')
 
 
 if __name__ == '__main__':
-    from sql_alchemy import database
-    database.init_app(app)
+    from sql_alchemy import db
+    db.init_app(app)
     app.run(host='172.31.95.196', port=8090, debug=True)
