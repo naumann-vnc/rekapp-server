@@ -1,6 +1,4 @@
 from sql_alchemy import database
-from sqlalchemy.sql.expression import func
-import datetime
 
 
 class UserModel(database.Model):
@@ -8,8 +6,8 @@ class UserModel(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     email = database.Column(database.String(50))
     password = database.Column(database.String(255))
-    created_at = database.Column(database.DateTime, server_default=func.sysdate())
-    updated_at = database.Column(database.DateTime, onupdate=datetime.datetime.now)
+    created_at = database.Column(database.DateTime, server_default=database.func.now())
+    updated_at = database.Column(database.DateTime, server_default=database.func.now(), server_onupdate=database.func.now())
 
     def __init__(self, id, email, password):
         self.id = id
@@ -37,6 +35,13 @@ class UserModel(database.Model):
         if user:
             return user
         return None
+
+    @classmethod
+    def find_last_user(cls):
+        user_id = database.session.query(cls).order_by(cls.id.desc()).first()
+        if user_id:
+            return user_id.id + 1
+        return 1
 
     def save_user(self):
         database.session.add(self)
