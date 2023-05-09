@@ -1,13 +1,16 @@
 from flask import Flask, request
 from flask_restful import Api
-import json
 from pymongo import MongoClient
+
+import json
 from datetime import datetime
+
 
 app = Flask(__name__)
 api = Api(app)
-
 client = MongoClient('mongodb://172.17.0.3:27017/')
+
+
 #@app.before_first_request
 #if __name__ == '__main__':
 @app.route('/write', methods=['GET', 'POST'])
