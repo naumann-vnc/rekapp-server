@@ -13,7 +13,8 @@ area_api_v1 = Blueprint(
 CORS(area_api_v1)
 
 
-@area_api_v1.route('/', methods=['GET'])
+@area_api_v1.route('/squads', methods=['GET'])
+@jwt_required()
 def api_get_areas():
     try:
         response, status = AreaController.get_areas()
@@ -30,7 +31,8 @@ def api_get_area(id):
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
-@area_api_v1.route('/', methods=['POST'])
+@area_api_v1.route('/create', methods=['POST'])
+@jwt_required()
 def api_post_area():
     req = request.get_json()
     try:
