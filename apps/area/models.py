@@ -1,5 +1,5 @@
 from ..sql_alchemy import db
-
+from ..user.models import UserModel
 
 class AreaModel(db.Model):
     __tablename__ = 'areas'
@@ -24,6 +24,26 @@ class AreaModel(db.Model):
     @classmethod
     def get_areas(cls):
         return [area for area in cls.query.all()]
+
+    @classmethod
+    def get_areas_by_parent_id(cls, area_up_id):
+        return [area for area in cls.query.filter_by(area_up_id=area_up_id).all()]
+    
+    @classmethod
+    def get_areas_with_users(cls, area_up_id):
+        areas = AreaModel.query.filter_by(area_up_id=area_up_id).all()
+        areas_with_users = []
+
+        for area in areas:
+            users = UserModel.query.filter_by(area_id=area.id).all()
+            users_data = [user.json for user in users]
+            area_with_users = {
+                'area': area.json,
+                'users': users_data
+            }
+            areas_with_users.append(area_with_users)
+
+        return areas_with_users
 
     @classmethod
     def find_area_by_id(cls, id):

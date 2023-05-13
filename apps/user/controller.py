@@ -9,7 +9,7 @@ from .models import UserModel
 class UserController:
     @classmethod
     def get_users(cls):
-        users = UserModel.get_users()
+        users = UserModel.get_users_without_role()
         users_json = [user.json for user in users]
         return users_json, HTTPStatus.OK
 
@@ -21,14 +21,16 @@ class UserController:
         return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
 
     @classmethod
-    def add_user(cls, name, email, password, machine_id, area_id, role_id, job_role_id):
+    def add_user(cls, name, email, password, machine_id, area_id, role_id, job_role):
         user, status = cls.get_user_by_email(email)
         if status == HTTPStatus.OK:
             return {'message': f'User with email {email} already exists'}, HTTPStatus.UNAUTHORIZED
 
-        hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        hash_password = None
+        if password:
+            hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        new_user = UserModel(name=name, email=email, password=hash_password, machine_id=machine_id, area_id=area_id, role_id=role_id, job_role_id=job_role_id)
+        new_user = UserModel(name=name, email=email, password=hash_password, machine_id=machine_id, area_id=area_id, role_id=role_id, job_role=job_role)
 
         try:
             new_user.save_user()
@@ -38,7 +40,7 @@ class UserController:
         return new_user.json, HTTPStatus.CREATED
 
     @classmethod
-    def update_user(cls, email, name, new_email, password, machine_id, area_id, role_id, job_role_id):
+    def update_user(cls, email, name, new_email, password, machine_id, area_id, role_id, job_role):
         user = UserModel.find_user_by_email(email)
         if not user:
             return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
@@ -48,13 +50,17 @@ class UserController:
             if status == HTTPStatus.OK:
                 return {'message': f'Email {new_email} already exists'}, HTTPStatus.UNAUTHORIZED
 
+        hash_password = None
+        if password:
+            hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
         user.name = name
         user.email = new_email
-        user.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        user.password = hash_password
         user.machine_id = machine_id
         user.area_id = area_id
         user.role_id = role_id
-        user.job_role_id = job_role_id
+        user.job_role = job_role
         user.save_user()
 
         return {'message': 'User updated successfully'}, HTTPStatus.OK
@@ -77,7 +83,12 @@ class Login:
         token = {}
 
         if status == HTTPStatus.OK and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
-            token['token'] = create_access_token(identity=user['email'])
+            additional_claims = {
+                'role': user.get('role_id'),
+                'area_id': user.get('area_id')
+            }
+
+            token['token'] = create_access_token(identity=user['email'], additional_claims=additional_claims)
             return token, status
 
         return {'message': 'Invalid credentials'}, HTTPStatus.UNAUTHORIZED

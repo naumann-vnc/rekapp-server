@@ -44,11 +44,11 @@ def api_post_user():
     try:
         name = expect(req.get('name'), str, 'name')
         email = expect(req.get('email'), str, 'email')
-        password = expect(req.get('password'), str, 'password')
-        machine_id = expect(req.get('machine_id'), int, 'machine_id')
-        area_id = expect(req.get('area_id'), int, 'area_id')
-        role_id = expect(req.get('role_id'), int, 'role_id')
-        job_role_id = expect(req.get('job_role_id'), int, 'job_role_id')
+        password = req.get('password')
+        machine_id = req.get('machine_id')
+        area_id = req.get('area_id')
+        role_id = req.get('role_id')
+        job_role = expect(req.get('job_role'), str, 'job_role')
 
         response, status = UserController.add_user(
             name=name,
@@ -57,7 +57,7 @@ def api_post_user():
             machine_id=machine_id,
             area_id=area_id,
             role_id=role_id,
-            job_role_id=job_role_id
+            job_role=job_role
         )
 
         return jsonify(response), status
@@ -73,11 +73,11 @@ def api_update_user(email):
     try:
         name = expect(req.get('name'), str, 'name')
         new_email = expect(req.get('new_email'), str, 'new_email')
-        password = expect(req.get('password'), str, 'password')
-        machine_id = expect(req.get('machine_id'), int, 'machine_id')
+        password = req.get('password')
+        machine_id = req.get('machine_id')
         area_id = expect(req.get('area_id'), int, 'area_id')
-        role_id = expect(req.get('role_id'), int, 'role_id')
-        job_role_id = expect(req.get('job_role_id'), int, 'job_role_id')
+        role_id = req.get('role_id')
+        job_role = expect(req.get('job_role'), str, 'job_role')
 
         response, status = UserController.update_user(
             email=email,
@@ -87,7 +87,7 @@ def api_update_user(email):
             machine_id=machine_id,
             area_id=area_id,
             role_id=role_id,
-            job_role_id=job_role_id
+            job_role=job_role
         )
 
         return jsonify(response), status

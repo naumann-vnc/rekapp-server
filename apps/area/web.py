@@ -23,6 +23,26 @@ def api_get_areas():
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
+@area_api_v1.route('/squads/<area_up_id>', methods=['GET'])
+@jwt_required()
+def api_get_areas_by_area_up_id(area_up_id):
+    try:
+        response, status = AreaController.get_areas_by_area_up(area_up_id)
+
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
+@area_api_v1.route('/user/area/<area_up_id>', methods=['GET'])
+@jwt_required()
+def api_get_areas_with_users(area_up_id):
+    try:
+        response, status = AreaController.get_areas_with_users(area_up_id)
+
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
 @area_api_v1.route('/<id>', methods=['GET'])
 def api_get_area(id):
     try:
@@ -32,7 +52,7 @@ def api_get_area(id):
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
 @area_api_v1.route('/create', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 def api_post_area():
     req = request.get_json()
     try:

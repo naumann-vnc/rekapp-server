@@ -9,6 +9,20 @@ class AreaController:
         areas = AreaModel.get_areas()
         areas_json = [area.json for area in areas]
         return areas_json, HTTPStatus.OK
+    
+    @classmethod
+    def get_areas_by_area_up(cls, area_up_id):
+        areas = AreaModel.get_areas_by_parent_id(area_up_id)
+        areas_json = [area.json for area in areas]
+        return areas_json, HTTPStatus.OK
+    
+    @classmethod
+    def get_areas_with_users(cls, area_up_id):
+        area_with_users = AreaModel.get_areas_with_users(area_up_id)
+
+        if area_with_users:
+            return area_with_users, HTTPStatus.OK
+        return {'message': 'Area not found'}, HTTPStatus.NOT_FOUND
 
     @classmethod
     def get_area_by_id(cls, id):
