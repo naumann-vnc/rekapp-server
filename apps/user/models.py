@@ -7,16 +7,18 @@ class UserModel(db.Model):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
+    windows_user = db.Column(db.String(255))
     machine_id = db.Column(db.Integer, db.ForeignKey('machines.id'))
     area_id = db.Column(db.Integer, db.ForeignKey('areas.id'))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     job_role = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
-    def __init__(self, name, email, password, machine_id, area_id, role_id, job_role):
+    def __init__(self, name, email, password, windows_user, machine_id, area_id, role_id, job_role):
         self.name = name
         self.email = email
         self.password = password
+        self.windows_user = windows_user
         self.machine_id = machine_id
         self.area_id = area_id
         self.role_id = role_id
@@ -29,6 +31,7 @@ class UserModel(db.Model):
             'name': self.name,
             'email': self.email,
             'password': self.password,
+            'windows_user': self.windows_user,
             'machine_id': self.machine_id,
             'area_id': self.area_id,
             'role_id': self.role_id,
@@ -55,10 +58,11 @@ class UserModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_user(self, name, email, password, machine_id, area_id, role_id, job_role):
+    def update_user(self, name, email, password, windows_user, machine_id, area_id, role_id, job_role):
         self.name = name
         self.email = email
         self.password = password
+        self.windows_user = windows_user
         self.machine_id = machine_id
         self.area_id = area_id
         self.role_id = role_id
