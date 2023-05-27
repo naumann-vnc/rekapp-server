@@ -46,6 +46,7 @@ def api_post_user():
         email = expect(req.get('email'), str, 'email')
         password = req.get('password')
         windows_user = req.get('windows_user')
+        ip = req.get('ip')
         machine_id = req.get('machine_id')
         area_id = req.get('area_id')
         role_id = req.get('role_id')
@@ -56,6 +57,7 @@ def api_post_user():
             email=email,
             password=password,
             windows_user=windows_user,
+            ip=ip,
             machine_id=machine_id,
             area_id=area_id,
             role_id=role_id,
@@ -77,6 +79,7 @@ def api_update_user(email):
         new_email = expect(req.get('new_email'), str, 'new_email')
         password = req.get('password')
         windows_user = req.get('windows_user')
+        ip = req.get('ip')
         machine_id = req.get('machine_id')
         area_id = expect(req.get('area_id'), int, 'area_id')
         role_id = req.get('role_id')
@@ -88,6 +91,7 @@ def api_update_user(email):
             new_email=new_email,
             password=password,
             windows_user=windows_user,
+            ip=ip,
             machine_id=machine_id,
             area_id=area_id,
             role_id=role_id,
