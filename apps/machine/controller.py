@@ -18,12 +18,12 @@ class MachineController:
         return {'message': 'Machine not found'}, HTTPStatus.NOT_FOUND
 
     @classmethod
-    def add_machine(cls, ip, inventory):
-        machine = MachineModel.find_machine_by_ip(ip)
+    def add_machine(cls, receiver_ip, receiver_port, package_capture_time, inactivity_threshold):
+        machine = MachineModel.find_machine_by_ip(receiver_ip)
         if machine:
-            return {'message': f'Machine with IP {ip} already exists'}, HTTPStatus.UNAUTHORIZED
+            return {'message': f'Machine with IP {receiver_ip} already exists'}, HTTPStatus.UNAUTHORIZED
 
-        new_machine = MachineModel(ip, inventory)
+        new_machine = MachineModel(receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
 
         try:
             new_machine.save_machine()
@@ -33,12 +33,12 @@ class MachineController:
         return new_machine.json, HTTPStatus.CREATED
 
     @classmethod
-    def update_machine(cls, id, ip, inventory):
+    def update_machine(cls, id, receiver_ip, receiver_port, package_capture_time, inactivity_threshold):
         machine = MachineModel.find_machine_by_id(id)
         if not machine:
             return {'message': 'Machine not found'}, HTTPStatus.NOT_FOUND
 
-        machine.update_machine(ip, inventory)
+        machine.update_machine(receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
 
         return {'message': 'Machine updated successfully'}, HTTPStatus.OK
 

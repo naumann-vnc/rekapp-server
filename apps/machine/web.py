@@ -36,10 +36,12 @@ def api_get_machine_by_id(id):
 def api_add_machine():
     req = request.get_json()
     try:
-        ip = req.get('ip')
-        inventory = req.get('inventory')
+        receiver_ip = req.get('receiver_ip')
+        receiver_port = req.get('receiver_port')
+        package_capture_time = req.get('package_capture_time')
+        inactivity_threshold = req.get('inactivity_threshold')
 
-        response, status = MachineController.add_machine(ip, inventory)
+        response, status = MachineController.add_machine(receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
         return jsonify(response), status
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
@@ -50,10 +52,12 @@ def api_add_machine():
 def api_update_machine(id):
     req = request.get_json()
     try:
-        ip = req.get('ip')
-        inventory = req.get('inventory')
+        receiver_ip = req.get('receiver_ip')
+        receiver_port = req.get('receiver_port')
+        package_capture_time = req.get('package_capture_time')
+        inactivity_threshold = req.get('inactivity_threshold')
 
-        response, status = MachineController.update_machine(id, ip, inventory)
+        response, status = MachineController.update_machine(id, receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
         return jsonify(response), status
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
