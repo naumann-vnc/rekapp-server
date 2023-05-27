@@ -1,6 +1,9 @@
 from flask_jwt_extended import create_access_token
 import bcrypt
 
+import os
+import json
+import requests
 from http import HTTPStatus
 
 from .models import UserModel
@@ -31,6 +34,13 @@ class UserController:
             hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         new_user = UserModel(name=name, email=email, password=hash_password, windows_user=windows_user, machine_id=machine_id, area_id=area_id, role_id=role_id, job_role=job_role)
+
+        if not password:
+            try:
+                folder = Grafana.add_folder(windows_user)
+                Grafana.add_dashboard(folder.get('uid'), windows_user)
+            except Exception as e:
+                return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         try:
             new_user.save_user()
@@ -93,3 +103,49 @@ class Login:
             return token, status
 
         return {'message': 'Invalid credentials'}, HTTPStatus.UNAUTHORIZED
+
+
+class Grafana:
+    @staticmethod
+    def add_folder(windows_user):
+        '''
+            Após criar o usuário cria a pasta no grafana.
+        '''
+        url = "https://grafana.rekapp.net/api/folders"
+        headers = {
+            "Authorization": "Bearer eyJrIjoiVEU4Z05CNUxONHZPbkYyWXYyeFpJWFZSdFR0M2d1UnAiLCJuIjoiYXBpa2V5IiwiaWQiOjF9",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "title": windows_user
+        }
+
+        response_folder = requests.post(url, headers=headers, json=data)
+        return response_folder.json()
+    
+    @staticmethod
+    def add_dashboard(uid, windows_user):
+        '''
+            Cria o dashboard na folder com o uid da pasta.
+        '''
+        dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(dir, "template_grafana.json")
+        if os.path.exists(path):
+            with open(path, "r") as file:
+                grafana_body = json.load(file)
+
+        url = "https://grafana.rekapp.net/api/dashboards/db"
+        headers = {
+            "Authorization": "Bearer eyJrIjoiVEU4Z05CNUxONHZPbkYyWXYyeFpJWFZSdFR0M2d1UnAiLCJuIjoiYXBpa2V5IiwiaWQiOjF9",
+            "Content-Type": "application/json"
+        }
+
+
+        grafana_body['folderUid'] = uid
+        for target in grafana_body['dashboard']['panels']:
+            if 'nedic' in target['targets'][0]['target']:
+                new_target = target['targets'][0]['target']
+                target['targets'][0]['target'] = new_target.replace('nedic', windows_user)
+
+        response_folder = requests.post(url, headers=headers, json=grafana_body)
+        return response_folder.json()
