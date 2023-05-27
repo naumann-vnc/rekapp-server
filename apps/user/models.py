@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from ..sql_alchemy import db
 
 
@@ -13,6 +15,7 @@ class UserModel(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     job_role = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     def __init__(self, name, email, password, windows_user, machine_id, area_id, role_id, job_role):
         self.name = name
@@ -23,6 +26,7 @@ class UserModel(db.Model):
         self.area_id = area_id
         self.role_id = role_id
         self.job_role = job_role
+        self.created_at = datetime.now()
 
     @property
     def json(self):
@@ -67,6 +71,7 @@ class UserModel(db.Model):
         self.area_id = area_id
         self.role_id = role_id
         self.job_role = job_role
+        self.updated_at = datetime.now()
         db.session.commit()
 
     def delete_user(self):
