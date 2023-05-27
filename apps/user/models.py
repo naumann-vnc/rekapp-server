@@ -6,7 +6,7 @@ from ..sql_alchemy import db
 class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255))
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     windows_user = db.Column(db.String(255))
@@ -56,6 +56,10 @@ class UserModel(db.Model):
     @classmethod
     def find_user_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
+
+    @classmethod
+    def find_user_by_windows_user(cls, windows_user):
+        return cls.query.filter_by(windows_user=windows_user).first()
 
     @classmethod
     def find_user_by_email(cls, email):

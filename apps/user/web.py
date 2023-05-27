@@ -69,6 +69,38 @@ def api_post_user():
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
 
+@user_api_v1.route('/configure', methods=['POST'])
+def api_configure():
+    req = request.get_json()
+
+    try:
+        name = req.get('name')
+        email = req.get('email')
+        password = req.get('password')
+        windows_user = expect(req.get('windows_user'), str, 'windows_user')
+        ip = expect(req.get('ip'), str, 'ip')
+        machine_id = req.get('machine_id')
+        area_id = req.get('area_id')
+        role_id = req.get('role_id')
+        job_role = req.get('job_role')
+
+        response, status = UserController.add_configure(
+            name=name,
+            email=email,
+            password=password,
+            windows_user=windows_user,
+            ip=ip,
+            machine_id=machine_id,
+            area_id=area_id,
+            role_id=role_id,
+            job_role=job_role
+        )
+
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
+
 @user_api_v1.route('/<email>', methods=['PUT'])
 # @jwt_required()
 def api_update_user(email):

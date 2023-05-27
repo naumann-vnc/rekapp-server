@@ -24,6 +24,13 @@ class UserController:
         return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
 
     @classmethod
+    def get_user_by_windows_user(cls, windows_user):
+        user = UserModel.find_user_by_windows_user(windows_user)
+        if user:
+            return user.json, HTTPStatus.OK
+        return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+
+    @classmethod
     def add_user(cls, name, email, password, windows_user, ip, machine_id, area_id, role_id, job_role):
         user, status = cls.get_user_by_email(email)
         if status == HTTPStatus.OK:
@@ -41,6 +48,21 @@ class UserController:
                 Grafana.add_dashboard(folder.get('uid'), windows_user)
             except Exception as e:
                 return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        try:
+            new_user.save_user()
+        except Exception as e:
+            return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        return new_user.json, HTTPStatus.CREATED
+
+    @classmethod
+    def add_configure(cls, name, email, password, windows_user, ip, machine_id, area_id, role_id, job_role):
+        user, status = cls.get_user_by_windows_user(windows_user)
+        if status == HTTPStatus.OK:
+            return {'message': f'User with user {windows_user} already exists'}, HTTPStatus.UNAUTHORIZED
+
+        new_user = UserModel(name=name, email=email, password=password, windows_user=windows_user, ip=ip, machine_id=machine_id, area_id=area_id, role_id=role_id, job_role=job_role)
 
         try:
             new_user.save_user()
