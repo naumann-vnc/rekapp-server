@@ -25,6 +25,17 @@ def api_get_users():
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
 
+@user_api_v1.route('/configure', methods=['GET'])
+@jwt_required()
+def api_get_users_with_ip_and_windows_user():
+    try:
+        response, status = UserController.get_users_with_ip_and_windows_user()
+
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
+
+
 @user_api_v1.route('/<email>', methods=['GET'])
 def api_get_user(email):
     try:

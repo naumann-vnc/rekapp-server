@@ -50,6 +50,13 @@ class UserModel(db.Model):
         return [user for user in cls.query.all()]
 
     @classmethod
+    def get_users_with_ip_and_windows_user(cls):
+        users = cls.query.filter(cls.name.is_(None), cls.email.is_(None), cls.password.is_(None),
+                                cls.machine_id.is_(None), cls.area_id.is_(None), cls.role_id.is_(None),
+                                cls.job_role.is_(None)).with_entities(cls.ip, cls.windows_user).all()
+        return users
+
+    @classmethod
     def get_users_without_role(cls):
         return cls.query.filter(cls.role_id.is_(None)).all()
 

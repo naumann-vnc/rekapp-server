@@ -17,6 +17,12 @@ class UserController:
         return users_json, HTTPStatus.OK
 
     @classmethod
+    def get_users_with_ip_and_windows_user(cls):
+        users = UserModel.get_users_with_ip_and_windows_user()
+        users_json = [{'ip': ip, 'windows_user': windows_user} for ip, windows_user in users]
+        return users_json, HTTPStatus.OK
+
+    @classmethod
     def get_user_by_email(cls, email):
         user = UserModel.find_user_by_email(email)
         if user:
