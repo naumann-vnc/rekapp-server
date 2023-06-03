@@ -58,7 +58,6 @@ def api_post_user():
         password = req.get('password')
         windows_user = req.get('windows_user')
         ip = req.get('ip')
-        machine_id = req.get('machine_id')
         area_id = req.get('area_id')
         role_id = req.get('role_id')
         job_role = expect(req.get('job_role'), str, 'job_role')
@@ -69,7 +68,6 @@ def api_post_user():
             password=password,
             windows_user=windows_user,
             ip=ip,
-            machine_id=machine_id,
             area_id=area_id,
             role_id=role_id,
             job_role=job_role
@@ -90,7 +88,6 @@ def api_configure():
         password = req.get('password')
         windows_user = expect(req.get('windows_user'), str, 'windows_user')
         ip = expect(req.get('ip'), str, 'ip')
-        machine_id = req.get('machine_id')
         area_id = req.get('area_id')
         role_id = req.get('role_id')
         job_role = req.get('job_role')
@@ -101,7 +98,6 @@ def api_configure():
             password=password,
             windows_user=windows_user,
             ip=ip,
-            machine_id=machine_id,
             area_id=area_id,
             role_id=role_id,
             job_role=job_role
@@ -123,7 +119,6 @@ def api_update_user(email):
         password = req.get('password')
         windows_user = req.get('windows_user')
         ip = req.get('ip')
-        machine_id = req.get('machine_id')
         area_id = req.get('area_id')
         role_id = req.get('role_id')
         job_role = req.get('job_role')
@@ -135,7 +130,6 @@ def api_update_user(email):
             password=password,
             windows_user=windows_user,
             ip=ip,
-            machine_id=machine_id,
             area_id=area_id,
             role_id=role_id,
             job_role=job_role

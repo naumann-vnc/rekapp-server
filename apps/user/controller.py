@@ -37,7 +37,7 @@ class UserController:
         return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
 
     @classmethod
-    def add_user(cls, name, email, password, windows_user, ip, machine_id, area_id, role_id, job_role):
+    def add_user(cls, name, email, password, windows_user, ip, area_id, role_id, job_role):
         user, status = cls.get_user_by_email(email)
         if status == HTTPStatus.OK:
             return {'message': f'User with email {email} already exists'}, HTTPStatus.UNAUTHORIZED
@@ -46,7 +46,7 @@ class UserController:
         if password:
             hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        new_user = UserModel(name=name, email=email, password=hash_password, windows_user=windows_user, ip=ip, machine_id=machine_id, area_id=area_id, role_id=role_id, job_role=job_role)
+        new_user = UserModel(name=name, email=email, password=hash_password, windows_user=windows_user, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role)
 
         if not password:
             try:
@@ -58,7 +58,7 @@ class UserController:
         try:
             user, status = cls.get_user_by_windows_user(windows_user)
             if status == HTTPStatus.OK:
-                return cls.update_user_with_configure(name, email, password, windows_user, machine_id, area_id, role_id, job_role)
+                return cls.update_user_with_configure(name, email, password, windows_user, area_id, role_id, job_role)
 
             new_user.save_user()
         except Exception as e:
@@ -67,12 +67,12 @@ class UserController:
         return new_user.json, HTTPStatus.CREATED
 
     @classmethod
-    def add_configure(cls, name, email, password, windows_user, ip, machine_id, area_id, role_id, job_role):
+    def add_configure(cls, name, email, password, windows_user, ip, area_id, role_id, job_role):
         user, status = cls.get_user_by_windows_user(windows_user)
         if status == HTTPStatus.OK:
             return {'message': f'User with user {windows_user} already exists'}, HTTPStatus.UNAUTHORIZED
 
-        new_user = UserModel(name=name, email=email, password=password, windows_user=windows_user, ip=ip, machine_id=machine_id, area_id=area_id, role_id=role_id, job_role=job_role)
+        new_user = UserModel(name=name, email=email, password=password, windows_user=windows_user, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role)
 
         try:
             new_user.save_user()
@@ -82,7 +82,7 @@ class UserController:
         return new_user.json, HTTPStatus.CREATED
 
     @classmethod
-    def update_user(cls, email, name, new_email, password, windows_user, ip, machine_id, area_id, role_id, job_role):
+    def update_user(cls, email, name, new_email, password, windows_user, ip, area_id, role_id, job_role):
         user = UserModel.find_user_by_email(email)
         if not user:
             return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
@@ -101,7 +101,6 @@ class UserController:
         user.password = hash_password
         user.windows_user = windows_user
         user.ip = ip
-        user.machine_id = machine_id
         user.area_id = area_id
         user.role_id = role_id
         user.job_role = job_role
@@ -110,13 +109,12 @@ class UserController:
         return {'message': 'User updated successfully'}, HTTPStatus.OK
 
     @classmethod
-    def update_user_with_configure(cls, name, new_email, password, windows_user, machine_id, area_id, role_id, job_role):
+    def update_user_with_configure(cls, name, new_email, password, windows_user, area_id, role_id, job_role):
         user = UserModel.find_user_by_windows_user(windows_user)
 
         user.name = name
         user.email = new_email
         user.password = password
-        user.machine_id = machine_id
         user.area_id = area_id
         user.role_id = role_id
         user.job_role = job_role
