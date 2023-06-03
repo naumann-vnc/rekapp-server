@@ -18,12 +18,13 @@ class MachineController:
         return {'message': 'Machine not found'}, HTTPStatus.NOT_FOUND
 
     @classmethod
-    def add_machine(cls, receiver_ip, receiver_port, package_capture_time, inactivity_threshold):
-        machine = MachineModel.find_machine_by_ip(receiver_ip)
+    def add_machine(cls, user_id, receiver_ip, receiver_port, package_capture_time, package_capture_interval, inactivity_threshold):
+        machine = MachineModel.find_machine_by_id(user_id)
         if machine:
-            return {'message': f'Machine with IP {receiver_ip} already exists'}, HTTPStatus.UNAUTHORIZED
+            machine.update_machine(receiver_ip, receiver_port, package_capture_time, package_capture_interval, inactivity_threshold)
+            return {'message': 'Machine updated successfully'}, HTTPStatus.OK
 
-        new_machine = MachineModel(receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
+        new_machine = MachineModel(user_id, receiver_ip, receiver_port, package_capture_time, package_capture_interval, inactivity_threshold)
 
         try:
             new_machine.save_machine()
@@ -31,16 +32,6 @@ class MachineController:
             return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         return new_machine.json, HTTPStatus.CREATED
-
-    @classmethod
-    def update_machine(cls, id, receiver_ip, receiver_port, package_capture_time, inactivity_threshold):
-        machine = MachineModel.find_machine_by_id(id)
-        if not machine:
-            return {'message': 'Machine not found'}, HTTPStatus.NOT_FOUND
-
-        machine.update_machine(receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
-
-        return {'message': 'Machine updated successfully'}, HTTPStatus.OK
 
     @classmethod
     def delete_machine(cls, id):

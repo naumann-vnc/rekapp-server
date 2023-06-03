@@ -31,33 +31,19 @@ def api_get_machine_by_id(id):
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
 
-@machine_api_v1.route('/', methods=['POST'])
+@machine_api_v1.route('/create', methods=['POST'])
 @jwt_required()
 def api_add_machine():
     req = request.get_json()
     try:
+        user_id = req.get('user_id')
         receiver_ip = req.get('receiver_ip')
         receiver_port = req.get('receiver_port')
         package_capture_time = req.get('package_capture_time')
+        package_capture_interval = req.get('package_capture_interval')
         inactivity_threshold = req.get('inactivity_threshold')
 
-        response, status = MachineController.add_machine(receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
-        return jsonify(response), status
-    except Exception as e:
-        return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
-
-
-@machine_api_v1.route('/<id>', methods=['PUT'])
-@jwt_required()
-def api_update_machine(id):
-    req = request.get_json()
-    try:
-        receiver_ip = req.get('receiver_ip')
-        receiver_port = req.get('receiver_port')
-        package_capture_time = req.get('package_capture_time')
-        inactivity_threshold = req.get('inactivity_threshold')
-
-        response, status = MachineController.update_machine(id, receiver_ip, receiver_port, package_capture_time, inactivity_threshold)
+        response, status = MachineController.add_machine(user_id, receiver_ip, receiver_port, package_capture_time, package_capture_interval, inactivity_threshold)
         return jsonify(response), status
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
