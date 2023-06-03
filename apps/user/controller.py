@@ -56,6 +56,10 @@ class UserController:
                 return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         try:
+            user, status = cls.get_user_by_windows_user(windows_user)
+            if status == HTTPStatus.OK:
+                return cls.update_user_with_configure(name, email, password, windows_user, machine_id, area_id, role_id, job_role)
+
             new_user.save_user()
         except Exception as e:
             return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
@@ -97,6 +101,21 @@ class UserController:
         user.password = hash_password
         user.windows_user = windows_user
         user.ip = ip
+        user.machine_id = machine_id
+        user.area_id = area_id
+        user.role_id = role_id
+        user.job_role = job_role
+        user.save_user()
+
+        return {'message': 'User updated successfully'}, HTTPStatus.OK
+
+    @classmethod
+    def update_user_with_configure(cls, name, new_email, password, windows_user, machine_id, area_id, role_id, job_role):
+        user = UserModel.find_user_by_windows_user(windows_user)
+
+        user.name = name
+        user.email = new_email
+        user.password = password
         user.machine_id = machine_id
         user.area_id = area_id
         user.role_id = role_id
