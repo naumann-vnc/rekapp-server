@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from werkzeug.middleware.proxy_fix import ProxyFix
-import json, pymongo, re
 from pymongo import MongoClient
+
+import json
 from datetime import datetime
+
 
 app = Flask(__name__)
 cors = CORS(app)
+
 
 def db_connection(database, starttime):
     client = MongoClient('172.17.0.3', 27017)
