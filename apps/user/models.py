@@ -14,10 +14,11 @@ class UserModel(db.Model):
     area_id = db.Column(db.Integer, db.ForeignKey('areas.id'))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     job_role = db.Column(db.String(255))
+    dashboard_uid = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
-    def __init__(self, name, email, password, windows_user, ip, area_id, role_id, job_role):
+    def __init__(self, name, email, password, windows_user, ip, area_id, role_id, job_role, dashboard_uid):
         self.name = name
         self.email = email
         self.password = password
@@ -26,6 +27,7 @@ class UserModel(db.Model):
         self.area_id = area_id
         self.role_id = role_id
         self.job_role = job_role
+        self.dashboard_uid = dashboard_uid
         self.created_at = datetime.now()
 
     @property
@@ -39,7 +41,8 @@ class UserModel(db.Model):
             'ip': self.ip,
             'area_id': self.area_id,
             'role_id': self.role_id,
-            'job_role': self.job_role
+            'job_role': self.job_role,
+            'dashboard_uid': self.dashboard_uid
         }
 
     @classmethod
@@ -50,7 +53,7 @@ class UserModel(db.Model):
     def get_users_with_ip_and_windows_user(cls):
         users = cls.query.filter(cls.name.is_(None), cls.email.is_(None), cls.password.is_(None),
                                 cls.area_id.is_(None), cls.role_id.is_(None),
-                                cls.job_role.is_(None)).with_entities(cls.ip, cls.windows_user).all()
+                                cls.job_role.is_(None), cls.dashboard_uid.is_(None)).with_entities(cls.ip, cls.windows_user).all()
         return users
 
     @classmethod
@@ -73,7 +76,7 @@ class UserModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_user(self, name, email, password, windows_user, ip, area_id, role_id, job_role):
+    def update_user(self, name, email, password, windows_user, ip, area_id, role_id, job_role, dashboard_uid):
         self.name = name
         self.email = email
         self.password = password
@@ -82,6 +85,7 @@ class UserModel(db.Model):
         self.area_id = area_id
         self.role_id = role_id
         self.job_role = job_role
+        self.dashboard_uid = dashboard_uid
         self.updated_at = datetime.now()
         db.session.commit()
 
