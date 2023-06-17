@@ -50,8 +50,8 @@ class UserController:
 
         if not password:
             try:
-                folder = Grafana.add_folder(windows_user)
-                dashboard = Grafana.add_dashboard(folder.get('uid'), windows_user, name)
+                folder = Grafana.add_folder(name)
+                dashboard = Grafana.add_dashboard(folder.get('uid'), windows_user)
                 new_user.dashboard_uid = dashboard.get('uid')
             except Exception as e:
                 return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
@@ -158,7 +158,7 @@ class Login:
 
 class Grafana:
     @staticmethod
-    def add_folder(windows_user):
+    def add_folder(name):
         '''
             Após criar o usuário cria a pasta no grafana.
         '''
@@ -168,14 +168,14 @@ class Grafana:
             "Content-Type": "application/json"
         }
         data = {
-            "title": windows_user
+            "title": name
         }
 
         response_folder = requests.post(url, headers=headers, json=data)
         return response_folder.json()
     
     @staticmethod
-    def add_dashboard(uid, windows_user, name):
+    def add_dashboard(uid, windows_user):
         '''
             Cria o dashboard na folder com o uid da pasta.
         '''
@@ -192,7 +192,7 @@ class Grafana:
         }
 
         grafana_body['folderUid'] = uid
-        grafana_body['dashboard']['title'] = name
+        grafana_body['dashboard']['title'] = windows_user
         for target in grafana_body['dashboard']['panels']:
             if 'nedic' in target['targets'][0]['target']:
                 new_target = target['targets'][0]['target']
