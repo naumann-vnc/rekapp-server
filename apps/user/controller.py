@@ -144,6 +144,7 @@ class Login:
 
         if status == HTTPStatus.OK and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
             additional_claims = {
+                'id': user.get('id'),
                 'name': user.get('name'),
                 'job_role': user.get('job_role'),
                 'role': user.get('role_id'),

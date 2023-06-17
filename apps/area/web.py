@@ -23,21 +23,21 @@ def api_get_areas():
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
-@area_api_v1.route('/squads/<area_up_id>', methods=['GET'])
+@area_api_v1.route('/squads/<responsible_id>', methods=['GET'])
 @jwt_required()
-def api_get_areas_by_area_up_id(area_up_id):
+def api_get_areas_by_area_responsible_id(responsible_id):
     try:
-        response, status = AreaController.get_areas_by_area_up(area_up_id)
+        response, status = AreaController.get_areas_by_responsible(responsible_id)
 
         return jsonify(response), status
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
-@area_api_v1.route('/user/area/<area_up_id>', methods=['GET'])
+@area_api_v1.route('/user/area/<responsible_id>', methods=['GET'])
 @jwt_required()
-def api_get_areas_with_users(area_up_id):
+def api_get_areas_with_users(responsible_id):
     try:
-        response, status = AreaController.get_areas_with_users(area_up_id)
+        response, status = AreaController.get_areas_with_users(responsible_id)
 
         return jsonify(response), status
     except Exception as e:
@@ -52,14 +52,14 @@ def api_get_area(id):
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
 
 @area_api_v1.route('/create', methods=['POST'])
-# @jwt_required()
+@jwt_required()
 def api_post_area():
     req = request.get_json()
     try:
         name = req.get('name')
-        area_up_id = req.get('area_up_id')
+        responsible_id = req.get('responsible_id')
 
-        response, status = AreaController.add_area(name, area_up_id)
+        response, status = AreaController.add_area(name, responsible_id)
         return jsonify(response), status
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
@@ -69,9 +69,9 @@ def api_update_area(id):
     req = request.get_json()
     try:
         name = req.get('name')
-        area_up_id = req.get('area_up_id')
+        responsible_id = req.get('responsible_id')
 
-        response, status = AreaController.update_area(id, name, area_up_id)
+        response, status = AreaController.update_area(id, name, responsible_id)
         return jsonify(response), status
     except Exception as e:
         return jsonify({'error': str(e)}), HTTPStatus.BAD_REQUEST
