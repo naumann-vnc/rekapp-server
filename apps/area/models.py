@@ -5,20 +5,18 @@ class AreaModel(db.Model):
     __tablename__ = 'areas'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    area_up_id = db.Column(db.Integer, db.ForeignKey('areas.id'))
+    responsible_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    sub_areas = db.relationship('AreaModel', backref=db.backref('parent_area', remote_side=[id]))
-
-    def __init__(self, name, area_up_id=None):
+    def __init__(self, name, responsible_id):
         self.name = name
-        self.area_up_id = area_up_id
+        self.responsible_id = responsible_id
 
     @property
     def json(self):
         return {
             'id': self.id,
             'name': self.name,
-            'area_up_id': self.area_up_id,
+            'responsible_id': self.responsible_id,
         }
 
     @classmethod
@@ -26,12 +24,12 @@ class AreaModel(db.Model):
         return [area for area in cls.query.all()]
 
     @classmethod
-    def get_areas_by_parent_id(cls, area_up_id):
-        return [area for area in cls.query.filter_by(area_up_id=area_up_id).all()]
+    def get_areas_by_responsible_id(cls, responsible_id):
+        return [area for area in cls.query.filter_by(responsible_id=responsible_id).all()]
     
     @classmethod
-    def get_areas_with_users(cls, area_up_id):
-        areas = AreaModel.query.filter_by(area_up_id=area_up_id).all()
+    def get_areas_with_users(cls, responsible_id):
+        areas = AreaModel.query.filter_by(responsible_id=responsible_id).all()
         areas_with_users = []
 
         for area in areas:
@@ -57,9 +55,9 @@ class AreaModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_area(self, name, area_up_id):
+    def update_area(self, name, responsible_id):
         self.name = name
-        self.area_up_id = area_up_id
+        self.responsible_id = responsible_id
         db.session.commit()
 
     def delete_area(self):

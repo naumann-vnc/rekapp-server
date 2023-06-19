@@ -61,6 +61,7 @@ def api_post_user():
         area_id = req.get('area_id')
         role_id = req.get('role_id')
         job_role = expect(req.get('job_role'), str, 'job_role')
+        dashboard_uid = req.get('dashboard_uid')
 
         response, status = UserController.add_user(
             name=name,
@@ -70,7 +71,8 @@ def api_post_user():
             ip=ip,
             area_id=area_id,
             role_id=role_id,
-            job_role=job_role
+            job_role=job_role,
+            dashboard_uid=dashboard_uid
         )
 
         return jsonify(response), status
@@ -91,6 +93,7 @@ def api_configure():
         area_id = req.get('area_id')
         role_id = req.get('role_id')
         job_role = req.get('job_role')
+        dashboard_uid = req.get('dashboard_uid')
 
         response, status = UserController.add_configure(
             name=name,
@@ -100,7 +103,8 @@ def api_configure():
             ip=ip,
             area_id=area_id,
             role_id=role_id,
-            job_role=job_role
+            job_role=job_role,
+            dashboard_uid=dashboard_uid
         )
 
         return jsonify(response), status
@@ -122,6 +126,7 @@ def api_update_user(email):
         area_id = req.get('area_id')
         role_id = req.get('role_id')
         job_role = req.get('job_role')
+        dashboard_uid = req.get('dashboard_uid')
 
         response, status = UserController.update_user(
             email=email,
@@ -132,7 +137,8 @@ def api_update_user(email):
             ip=ip,
             area_id=area_id,
             role_id=role_id,
-            job_role=job_role
+            job_role=job_role,
+            dashboard_uid=dashboard_uid
         )
 
         return jsonify(response), status

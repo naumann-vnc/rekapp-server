@@ -37,7 +37,7 @@ class UserController:
         return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
 
     @classmethod
-    def add_user(cls, name, email, password, windows_user, ip, area_id, role_id, job_role):
+    def add_user(cls, name, email, password, windows_user, ip, area_id, role_id, job_role, dashboard_uid):
         user, status = cls.get_user_by_email(email)
         if status == HTTPStatus.OK:
             return {'message': f'User with email {email} already exists'}, HTTPStatus.UNAUTHORIZED
@@ -46,19 +46,20 @@ class UserController:
         if password:
             hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        new_user = UserModel(name=name, email=email, password=hash_password, windows_user=windows_user, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role)
+        new_user = UserModel(name=name, email=email, password=hash_password, windows_user=windows_user, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role, dashboard_uid=dashboard_uid)
 
         if not password:
             try:
-                folder = Grafana.add_folder(windows_user)
-                Grafana.add_dashboard(folder.get('uid'), windows_user)
+                folder = Grafana.add_folder(name)
+                dashboard = Grafana.add_dashboard(folder.get('uid'), windows_user)
+                new_user.dashboard_uid = dashboard.get('uid')
             except Exception as e:
                 return {'message': 'An internal error occurred.'}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         try:
             user, status = cls.get_user_by_windows_user(windows_user)
             if status == HTTPStatus.OK:
-                return cls.update_user_with_configure(name, email, password, windows_user, area_id, role_id, job_role)
+                return cls.update_user_with_configure(name, email, password, windows_user, area_id, role_id, job_role, dashboard_uid=dashboard.get('uid'))
 
             new_user.save_user()
         except Exception as e:
@@ -67,12 +68,12 @@ class UserController:
         return new_user.json, HTTPStatus.CREATED
 
     @classmethod
-    def add_configure(cls, name, email, password, windows_user, ip, area_id, role_id, job_role):
+    def add_configure(cls, name, email, password, windows_user, ip, area_id, role_id, job_role, dashboard_uid):
         user, status = cls.get_user_by_windows_user(windows_user)
         if status == HTTPStatus.OK:
             return {'message': f'User with user {windows_user} already exists'}, HTTPStatus.UNAUTHORIZED
 
-        new_user = UserModel(name=name, email=email, password=password, windows_user=windows_user, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role)
+        new_user = UserModel(name=name, email=email, password=password, windows_user=windows_user, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role, dashboard_uid=dashboard_uid)
 
         try:
             new_user.save_user()
@@ -82,7 +83,7 @@ class UserController:
         return new_user.json, HTTPStatus.CREATED
 
     @classmethod
-    def update_user(cls, email, name, new_email, password, windows_user, ip, area_id, role_id, job_role):
+    def update_user(cls, email, name, new_email, password, windows_user, ip, area_id, role_id, job_role, dashboard_uid):
         user = UserModel.find_user_by_email(email)
         if not user:
             return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
@@ -104,12 +105,13 @@ class UserController:
         user.area_id = area_id
         user.role_id = role_id
         user.job_role = job_role
+        user.dashboard_uid = dashboard_uid
         user.save_user()
 
         return {'message': 'User updated successfully'}, HTTPStatus.OK
 
     @classmethod
-    def update_user_with_configure(cls, name, new_email, password, windows_user, area_id, role_id, job_role):
+    def update_user_with_configure(cls, name, new_email, password, windows_user, area_id, role_id, job_role, dashboard_uid):
         user = UserModel.find_user_by_windows_user(windows_user)
 
         user.name = name
@@ -118,6 +120,7 @@ class UserController:
         user.area_id = area_id
         user.role_id = role_id
         user.job_role = job_role
+        user.dashboard_uid = dashboard_uid
         user.save_user()
 
         return {'message': 'User updated successfully'}, HTTPStatus.OK
@@ -141,6 +144,9 @@ class Login:
 
         if status == HTTPStatus.OK and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
             additional_claims = {
+                'id': user.get('id'),
+                'name': user.get('name'),
+                'job_role': user.get('job_role'),
                 'role': user.get('role_id'),
                 'area_id': user.get('area_id')
             }
@@ -153,7 +159,7 @@ class Login:
 
 class Grafana:
     @staticmethod
-    def add_folder(windows_user):
+    def add_folder(name):
         '''
             Após criar o usuário cria a pasta no grafana.
         '''
@@ -163,7 +169,7 @@ class Grafana:
             "Content-Type": "application/json"
         }
         data = {
-            "title": windows_user
+            "title": name
         }
 
         response_folder = requests.post(url, headers=headers, json=data)
@@ -186,8 +192,8 @@ class Grafana:
             "Content-Type": "application/json"
         }
 
-
         grafana_body['folderUid'] = uid
+        grafana_body['dashboard']['title'] = windows_user
         for target in grafana_body['dashboard']['panels']:
             if 'nedic' in target['targets'][0]['target']:
                 new_target = target['targets'][0]['target']
