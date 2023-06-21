@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from ..sql_alchemy import db
+from ..machine.models import MachineModel
 
 
 class UserModel(db.Model):
@@ -90,5 +91,8 @@ class UserModel(db.Model):
         db.session.commit()
 
     def delete_user(self):
+        machines = MachineModel.query.filter_by(user_id=self.id).all()
+        for machine in machines:
+            db.session.delete(machine)
         db.session.delete(self)
         db.session.commit()
