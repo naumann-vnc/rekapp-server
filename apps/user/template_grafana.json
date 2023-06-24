@@ -98,7 +98,7 @@
                         "calcs": [],
                         "displayMode": "list",
                         "placement": "bottom",
-                        "showLegend": true
+                        "showLegend": false
                     },
                     "tooltip": {
                         "mode": "single",
@@ -113,7 +113,7 @@
                         },
                         "hide": false,
                         "refId": "A",
-                        "target": "/query/nedic/graph&activity_score",
+                        "target": "/query/windows_user/graph&activity_score",
                         "type": "timeserie"
                     }
                 ],
@@ -181,7 +181,7 @@
                         "calcs": [],
                         "displayMode": "list",
                         "placement": "bottom",
-                        "showLegend": true
+                        "showLegend": false
                     },
                     "orientation": "auto",
                     "showValue": "never",
@@ -202,7 +202,7 @@
                         },
                         "hide": false,
                         "refId": "A",
-                        "target": "/query/nedic/graph&inactivity_score",
+                        "target": "/query/windows_user/graph&inactivity_score",
                         "type": "timeserie"
                     }
                 ],
@@ -268,7 +268,7 @@
                         "calcs": [],
                         "displayMode": "list",
                         "placement": "bottom",
-                        "showLegend": true
+                        "showLegend": false
                     },
                     "orientation": "auto",
                     "showValue": "auto",
@@ -288,7 +288,7 @@
                             "uid": "QUaRZMHVk"
                         },
                         "refId": "A",
-                        "target": "/query/nedic/bar",
+                        "target": "/query/windows_user/bar",
                         "type": "timeserie"
                     }
                 ],
@@ -353,7 +353,7 @@
                             "uid": "QUaRZMHVk"
                         },
                         "refId": "A",
-                        "target": "/query/nedic/gauge",
+                        "target": "/query/windows_user/gauge",
                         "type": "timeserie"
                     }
                 ],
@@ -454,7 +454,7 @@
                             "uid": "QUaRZMHVk"
                         },
                         "refId": "A",
-                        "target": "/query/nedic/table",
+                        "target": "/query/windows_user/table",
                         "type": "timeserie"
                     }
                 ],
@@ -502,7 +502,19 @@
                             "properties": [
                                 {
                                     "id": "unit",
-                                    "value": "dateTimeAsSystem"
+                                    "value": "dateTimeAsIso"
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "Data Final"
+                            },
+                            "properties": [
+                                {
+                                    "id": "custom.hidden",
+                                    "value": true
                                 }
                             ]
                         }
@@ -528,7 +540,7 @@
                     "sortBy": [
                         {
                             "desc": true,
-                            "displayName": "Data inicial"
+                            "displayName": "Rank de uso"
                         }
                     ]
                 },
@@ -540,11 +552,11 @@
                             "uid": "QUaRZMHVk"
                         },
                         "refId": "A",
-                        "target": "/query/nedic/gauge",
+                        "target": "/query/windows_user/table2",
                         "type": "timeserie"
                     }
                 ],
-                "title": "Programa mais utilizado por pacote",
+                "title": "Programas utilizados",
                 "transparent": true,
                 "type": "table"
             }

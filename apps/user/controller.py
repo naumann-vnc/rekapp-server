@@ -197,7 +197,7 @@ class Grafana:
         for target in grafana_body['dashboard']['panels']:
             if 'nedic' in target['targets'][0]['target']:
                 new_target = target['targets'][0]['target']
-                target['targets'][0]['target'] = new_target.replace('nedic', windows_user)
+                target['targets'][0]['target'] = new_target.replace('windows_user', windows_user)
 
         response_folder = requests.post(url, headers=headers, json=grafana_body)
         return response_folder.json()
