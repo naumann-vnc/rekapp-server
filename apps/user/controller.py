@@ -73,7 +73,9 @@ class UserController:
         if status == HTTPStatus.OK:
             return {'message': f'User with user {windows_user} already exists'}, HTTPStatus.UNAUTHORIZED
 
-        new_user = UserModel(name=name, email=email, password=password, windows_user=windows_user, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role, dashboard_uid=dashboard_uid)
+        db_name = windows_user.replace(".", "")
+
+        new_user = UserModel(name=name, email=email, password=password, windows_user=db_name, ip=ip, area_id=area_id, role_id=role_id, job_role=job_role, dashboard_uid=dashboard_uid)
 
         try:
             new_user.save_user()
